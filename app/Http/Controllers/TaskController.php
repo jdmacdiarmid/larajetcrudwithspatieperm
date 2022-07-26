@@ -27,53 +27,50 @@ class TaskController extends Controller
      * Show the form for creating a new resource.
      *
      * @return View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function create(): View
     {
+        $this->authorize('manage tasks');
+
         return view('tasks.create');
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreTaskRequest  $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @param StoreTaskRequest $request
+     * @return RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function store(StoreTaskRequest $request): RedirectResponse
     {
-        Task::create($request->validated());
-        return redirect()->route('tasks.index');
-    }
+        $this->authorize('manage tasks');
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Task  $task
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Task $task)
-    {
-        //
+        Task::create($request->validated());
+
+        return redirect()->route('tasks.index');
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Task  $task
+     * @param Task $task
      * @return View
      */
     public function edit(Task $task): View
     {
-        //dd($task);
+        $this->authorize('manage tasks');
+
         return view('tasks.edit', compact(['task']));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateTaskRequest  $request
-     * @param  \App\Models\Task  $task
-     * @return \Illuminate\Http\RedirectResponse
+     * @param UpdateTaskRequest $request
+     * @param Task $task
+     * @return RedirectResponse
      */
     public function update(UpdateTaskRequest $request, Task $task): RedirectResponse
     {
@@ -84,12 +81,16 @@ class TaskController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Task  $task
-     * @return \Illuminate\Http\RedirectResponse
+     * @param Task $task
+     * @return RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function destroy(Task $task): RedirectResponse
     {
+        $this->authorize('manage tasks');
+
         $task->delete();
+
         return redirect()->route('tasks.index');
     }
 }
